@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BTS Studio Sign In</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one centered card on a light grey ground; login view and home view swap in place. */
+:root {
+  --bg: #f0f0f0; --card: #ffffff; --fg: #232629; --muted: #6b7075; --line: #d9dbdd;
+  --accent: #d41a5f; --btn: #232629; --btn-fg: #ffffff; --err: #b3261e; --err-bg: #fdecea; --ok: #1e7a46;
+  --font: "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #17191b; --card: #212427; --fg: #f1f2f3; --muted: #9aa0a6; --line: #3a3e42;
+  --accent: #ff5c97; --btn: #f1f2f3; --btn-fg: #17191b; --err: #ffb4ab; --err-bg: #3a1f1d; --ok: #6fd89a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #17191b; --card: #212427; --fg: #f1f2f3; --muted: #9aa0a6; --line: #3a3e42;
+  --accent: #ff5c97; --btn: #f1f2f3; --btn-fg: #17191b; --err: #ffb4ab; --err-bg: #3a1f1d; --ok: #6fd89a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; margin: 0; padding-inline: 16px; padding-block: 40px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; gap: 36px; }
+.brand { display: flex; align-items: center; gap: 14px; font-size: 38px; font-weight: 500; letter-spacing: -0.5px; }
+.brand svg { width: 44px; height: 44px; }
+.brand .bar { width: 1px; height: 30px; background: var(--accent); }
+.brand .studio { color: var(--accent); font-size: 22px; font-weight: 600; letter-spacing: 4px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 48px; width: 100%; max-width: 568px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+h1 { margin: 0 0 8px; font-size: 28px; font-weight: 600; text-wrap: balance; }
+.sub { margin: 0 0 32px; color: var(--muted); }
+.btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 56px; border-radius: 10px; font: 600 17px var(--font); cursor: pointer; }
+.btn.ms { background: transparent; color: var(--fg); border: 1.5px solid var(--muted); font-weight: 500; }
+.btn.primary { background: var(--btn); color: var(--btn-fg); border: 0; }
+.btn:hover { opacity: .88; }
+.btn:focus-visible, input:focus-visible, .eye:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.ms-logo { width: 22px; height: 22px; display: grid; grid-template: 1fr 1fr / 1fr 1fr; gap: 2px; }
+.ms-logo i:nth-child(1) { background: #f25022; } .ms-logo i:nth-child(2) { background: #7fba00; }
+.ms-logo i:nth-child(3) { background: #00a4ef; } .ms-logo i:nth-child(4) { background: #ffb900; }
+.or { display: flex; align-items: center; gap: 16px; color: var(--muted); margin-block: 24px; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+form { display: flex; flex-direction: column; gap: 20px; }
+label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+.field { position: relative; }
+input { width: 100%; height: 56px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); font: 17px var(--font); padding-inline: 20px; }
+input::placeholder { color: var(--muted); opacity: .8; }
+input:focus { border-color: var(--fg); }
+.field input[type="password"], .field input.shown { padding-right: 56px; }
+.eye { position: absolute; right: 8px; bottom: 8px; width: 40px; height: 40px; border: 0; background: none; color: var(--muted); cursor: pointer; border-radius: 8px; display: grid; place-items: center; }
+.error { background: var(--err-bg); color: var(--err); border-radius: 10px; padding: 12px 16px; font-size: 15px; }
+.hint { margin: 24px 0 0; font-size: 14px; color: var(--muted); text-align: center; }
+.hint code { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--fg); }
+.home { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.check { width: 72px; height: 72px; border-radius: 50%; background: var(--ok); color: var(--card); display: grid; place-items: center; margin-bottom: 8px; }
+.home p { margin: 0 0 20px; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 520px) { .card { padding: 28px 20px; } .brand { font-size: 30px; } .brand .studio { font-size: 17px; letter-spacing: 3px; } }
+</style>
+</head>
+<body>
+<div class="brand" aria-label="bts Studio">
+  <svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><g stroke="#d41a5f" stroke-width="2.5"><path d="M22 6v32M6 22h32M10.5 10.5l23 23M33.5 10.5l-23 23"/></g><g fill="#d41a5f"><circle cx="22" cy="22" r="5"/><circle cx="22" cy="5" r="3.5"/><circle cx="22" cy="39" r="3.5"/><circle cx="5" cy="22" r="3.5"/><circle cx="39" cy="22" r="3.5"/><circle cx="10" cy="10" r="3.5"/><circle cx="34" cy="10" r="3.5"/><circle cx="10" cy="34" r="3.5"/><circle cx="34" cy="34" r="3.5"/></g></svg>
+  <span>bts</span><span class="bar"></span><span class="studio">STUDIO</span>
+</div>
+
+<main class="card" id="login">
+  <h1>Sign in to your account</h1>
+  <p class="sub">Enter your credentials to continue</p>
+  <button class="btn ms" id="ms" type="button"><span class="ms-logo"><i></i><i></i><i></i><i></i></span>Sign in with Microsoft</button>
+  <div class="or">or</div>
+  <form id="form" novalidate>
+    <div><label for="email">Email address</label><input id="email" type="email" placeholder="you@bts.com" autocomplete="username"></div>
+    <div class="field"><label for="password">Password</label><input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="eye" id="eye" type="button" aria-label="Show password"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+    <div class="error" id="error" role="alert" hidden></div>
+    <button class="btn primary" type="submit">Sign in</button>
+  </form>
+  <p class="hint">Demo login: <code>Test@mail.com</code> / <code>Admin123</code></p>
+</main>
+
+<main class="card home" id="home" hidden>
+  <div class="check"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+  <h1>You have Logged in successfully</h1>
+  <p id="who"></p>
+  <button class="btn primary" id="logout" type="button">Log out</button>
+</main>
+
+<script>
+var USER = { email: "test@mail.com", pass: "Admin123" };
+var KEY = "bts-login-user";
+var $ = function (id) { return document.getElementById(id); };
+function load() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
+function save(v) { try { v ? sessionStorage.setItem(KEY, v) : sessionStorage.removeItem(KEY); } catch (e) {} }
+function show(user) {
+  $("login").hidden = !!user; $("home").hidden = !user;
+  if (user) $("who").textContent = "Signed in as " + user;
+  else { $("password").value = ""; $("error").hidden = true; }
+}
+$("form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var em = $("email").value.trim(), pw = $("password").value;
+  if (em.toLowerCase() === USER.email && pw === USER.pass) { save("Test@mail.com"); show("Test@mail.com"); }
+  else { $("error").textContent = "Incorrect email or password. Check your details and try again."; $("error").hidden = false; }
+});
+$("ms").addEventListener("click", function () { save("Microsoft demo user"); show("Microsoft demo user"); });
+$("logout").addEventListener("click", function () { save(null); show(null); });
+$("eye").addEventListener("click", function () {
+  var p = $("password"), s = p.type === "password";
+  p.type = s ? "text" : "password"; p.classList.toggle("shown", s);
+  $("eye").setAttribute("aria-label", s ? "Hide password" : "Show password");
+});
+show(load());
+</script>
+</body>
+</html>
